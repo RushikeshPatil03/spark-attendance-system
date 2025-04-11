@@ -11,18 +11,20 @@
     <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">BITM College Bellary</h1>
     <h2 class="text-xl font-semibold text-center mb-4">User Login</h2>
 
-    <form action="/login" method="POST" class="space-y-4">
-      <select name="role" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <form id="loginForm" class="space-y-4">
+      <select id="role" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         <option value="" disabled selected>Select Role</option>
         <option value="student">Student</option>
         <option value="faculty">Faculty</option>
       </select>
 
-      <input type="text" name="userId" placeholder="User ID (USN or Faculty ID)" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="text" id="userId" placeholder="User ID (USN or Faculty ID)" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
 
       <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Login</button>
     </form>
+
+    <p id="message" class="text-sm text-center text-red-500 mt-4"></p>
 
     <p class="text-sm text-center text-gray-500 mt-4">
       Don't have an account?
@@ -30,8 +32,44 @@
       <a href="/faculty_register.html" class="text-blue-600 hover:underline">Register as Faculty</a>
     </p>
   </div>
+
+  <!-- ✅ Login Logic -->
+  <script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const role = document.getElementById("role").value;
+      const userId = document.getElementById("userId").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("https://spark-attendance-backend.onrender.com/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, password, role })
+        });
+
+        const result = await res.json();
+
+        if (result.success && result.role === "faculty") {
+          window.location.href = "faculty_dashboard.html";
+        } else if (result.success && result.role === "student") {
+          window.location.href = "scan_qr.html";
+        } else {
+          message.textContent = "Invalid credentials or user not found.";
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        message.textContent = "Server error. Try again later.";
+      }
+    });
+  </script>
 </body>
 </html>
+
 
 
 
