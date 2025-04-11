@@ -1,0 +1,13 @@
+/* Optional custom styling for additional tweaks */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  input, select, button {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  button:hover {
+    transform: scale(1.02);
+  }
+  

@@ -1,0 +1,12 @@
+[
+  {
+    "userId": "3BR23CD077",
+    "password": "$2b$10$uWO6pUS.x1lMgJmae6mnKeV6ojt6fhNfH3E8iEM92ApqZxqQDsoyi",
+    "role": "student"
+  },
+  {
+    "userId": "FAC001",
+    "password": "$2b$10$XZp0T2YM4n/HZLGTlAa08ussoNj1QLeaFmasq0wvOd5DJh0dQEM0e",
+    "role": "faculty"
+  }
+]

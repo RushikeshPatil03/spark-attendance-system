@@ -1,0 +1,15 @@
+{
+    "name": "spark-attendance-system",
+    "version": "1.0.0",
+    "description": "Smart QR-based Attendance System for BITM College Bellary",
+    "main": "index.js",
+    "scripts": {
+      "start": "node server/index.js"
+    },
+    "dependencies": {
+      "bcrypt": "^5.1.0",
+      "body-parser": "^1.20.2",
+      "express": "^4.18.2",
+      "exceljs": "^4.3.0"
+    }
+  }
