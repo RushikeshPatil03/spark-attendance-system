@@ -1,4 +1,3 @@
-// server/routes/register.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -8,7 +7,7 @@ const router = express.Router();
 const USERS_FILE = path.join(__dirname, '../db/users.json');
 const REGISTERED_FILE = path.join(__dirname, '../db/registered_users.json');
 
-// Load user data from allowed list
+// Load allowed user list (faculty/students)
 function loadUserList() {
   if (!fs.existsSync(USERS_FILE)) return { students: [], faculty: [] };
   return JSON.parse(fs.readFileSync(USERS_FILE));
@@ -28,43 +27,56 @@ function saveRegisteredUsers(data) {
 // POST /register/student
 router.post('/student', async (req, res) => {
   const { userId, mobile, password } = req.body;
+
+  if (!userId || !mobile || !password) {
+    return res.status(400).json({ success: false, message: "All fields are required." });
+  }
+
   const users = loadUserList();
   const registered = loadRegisteredUsers();
 
   if (!users.students.find(s => s.userId === userId && s.mobile === mobile)) {
-    return res.status(400).send("Student userId/mobile not allowed.");
+    return res.status(400).json({ success: false, message: "Student userId/mobile not allowed." });
   }
 
   if (registered.find(u => u.userId === userId)) {
-    return res.status(409).send("User already registered.");
+    return res.status(409).json({ success: false, message: "User already registered." });
   }
 
   const hashed = await bcrypt.hash(password, 10);
   registered.push({ userId, password: hashed, role: 'student' });
   saveRegisteredUsers(registered);
-  res.redirect('/login.html');
+
+  res.json({ success: true });
 });
 
 // POST /register/faculty
 router.post('/faculty', async (req, res) => {
   const { userId, mobile, password } = req.body;
+
+  if (!userId || !mobile || !password) {
+    return res.status(400).json({ success: false, message: "All fields are required." });
+  }
+
   const users = loadUserList();
   const registered = loadRegisteredUsers();
 
   if (!users.faculty.find(f => f.userId === userId && f.mobile === mobile)) {
-    return res.status(400).send("Faculty userId/mobile not allowed.");
+    return res.status(400).json({ success: false, message: "Faculty userId/mobile not allowed." });
   }
 
   if (registered.find(u => u.userId === userId)) {
-    return res.status(409).send("User already registered.");
+    return res.status(409).json({ success: false, message: "User already registered." });
   }
 
   const hashed = await bcrypt.hash(password, 10);
   registered.push({ userId, password: hashed, role: 'faculty' });
   saveRegisteredUsers(registered);
-  res.redirect('/login.html');
+
+  res.json({ success: true });
 });
 
 module.exports = router;
+
 
 
