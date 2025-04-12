@@ -1,4 +1,3 @@
-// server/routes/attendance.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -20,12 +19,23 @@ function getStudentName(userId) {
   return student ? student.name || 'Unknown' : 'Unknown';
 }
 
-// POST /attendance (QR Scan)
+// ✅ QR-based attendance
 router.post('/', (req, res) => {
+  if (!req.is('application/json')) {
+    return res.status(400).send("Invalid content type.");
+  }
+
   const { userId, qrData } = req.body;
+  if (!userId || !qrData) return res.status(400).send("Missing userId or QR data.");
+
   try {
     const parsed = JSON.parse(qrData);
     const { sessionId, subject, time } = parsed;
+
+    if (!sessionId || !subject || !time) {
+      return res.status(400).send("Incomplete QR code data.");
+    }
+
     const today = new Date().toISOString().slice(0, 10);
     const sessionKey = `${today} (${time})`;
 
@@ -40,16 +50,24 @@ router.post('/', (req, res) => {
 
     student[sessionKey] = 'P';
     fs.writeFileSync(filename, JSON.stringify(data, null, 2));
-    res.send("Attendance marked as Present.");
+    res.send("✅ Attendance marked as Present.");
   } catch (err) {
     console.error('QR Parse Error or Save Error:', err);
     res.status(400).send("Invalid QR Code or attendance failed.");
   }
 });
 
-// PATCH /attendance/manual (Manual update)
+// ✅ Manual override by faculty
 router.patch('/manual', (req, res) => {
+  if (!req.is('application/json')) {
+    return res.status(400).send("Invalid content type.");
+  }
+
   const { userId, subject, date, time } = req.body;
+  if (!userId || !subject || !date || !time) {
+    return res.status(400).send("Missing required fields.");
+  }
+
   const sessionKey = `${date} (${time})`;
   const filename = path.join(ATTENDANCE_DIR, `${subject}.json`);
 
@@ -66,7 +84,7 @@ router.patch('/manual', (req, res) => {
 
     student[sessionKey] = 'P';
     fs.writeFileSync(filename, JSON.stringify(data, null, 2));
-    res.send("Attendance manually updated to Present.");
+    res.send("✅ Attendance manually updated to Present.");
   } catch (err) {
     console.error('Manual update failed:', err);
     res.status(500).send("Error updating attendance.");
@@ -74,3 +92,4 @@ router.patch('/manual', (req, res) => {
 });
 
 module.exports = router;
+
