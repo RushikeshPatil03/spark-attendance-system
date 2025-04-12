@@ -27,18 +27,18 @@
     function onScanSuccess(decodedText) {
       document.getElementById("status").innerText = "QR Code scanned! Marking attendance...";
 
-      fetch('/attendance', {
+      fetch('https://spark-attendance-backend.onrender.com/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: studentId, qrData: decodedText })
       })
-        .then(res => res.text())
-        .then(data => {
-          document.getElementById("status").innerText = data;
-        })
-        .catch(() => {
-          document.getElementById("status").innerText = "Error marking attendance. Please try again.";
-        });
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("status").innerText = data;
+      })
+      .catch(() => {
+        document.getElementById("status").innerText = "Error marking attendance. Please try again.";
+      });
     }
 
     const html5QrCode = new Html5Qrcode("qr-reader");
@@ -58,4 +58,5 @@
   </script>
 </body>
 </html>
+
 
