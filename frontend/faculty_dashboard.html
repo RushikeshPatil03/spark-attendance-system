@@ -76,7 +76,7 @@
     }
 
     function updateAttendanceList(subject, date, time) {
-      fetch(`/db/attendance/${subject}.json`)
+      fetch(`https://spark-attendance-backend.onrender.com/db/attendance/${subject}.json`)
         .then(res => res.json())
         .then(data => {
           const list = document.getElementById("attendanceList");
@@ -102,7 +102,7 @@
     }
 
     function markPresent(userId, subject, date, time) {
-      fetch('/attendance/manual', {
+      fetch('https://spark-attendance-backend.onrender.com/attendance/manual', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, subject, date, time })
@@ -120,10 +120,10 @@
         alert("Please select a subject to export attendance.");
         return;
       }
-      window.location.href = `/attendance/export/${encodeURIComponent(subject)}`;
-
+      window.location.href = `https://spark-attendance-backend.onrender.com/attendance/export/${encodeURIComponent(subject)}`;
     }
   </script>
 </body>
 </html>
+
 
