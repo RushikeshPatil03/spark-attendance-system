@@ -1,6 +1,7 @@
 {
     "students": [
-      { "userId": "3BR23CD077", "mobile": "9880418258", "name": "Rushikesh Patil" }
+      { "userId": "3BR23CD077", "mobile": "9880418258", "name": "Rushikesh Patil" },
+      { "userId": "3BR23CD092", "mobile": "8970740447", "name": "arvind" }
     ],
     "faculty": [
       { "userId": "FAC001", "mobile": "9123456780", "name": "Dr. Rao" }
