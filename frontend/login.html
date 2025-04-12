@@ -33,7 +33,6 @@
     </p>
   </div>
 
-  <!-- ✅ Login Logic -->
   <script>
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
@@ -41,34 +40,48 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const role = document.getElementById("role").value;
-      const userId = document.getElementById("userId").value;
-      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value.trim();
+      const userId = document.getElementById("userId").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Clear old messages
+      message.textContent = "";
+
+      if (!role || !userId || !password) {
+        message.textContent = "All fields are required.";
+        return;
+      }
 
       try {
         const res = await fetch("https://spark-attendance-backend.onrender.com/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, password, role })
+          body: JSON.stringify({ role, userId, password })
         });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          message.textContent = errorText || "Login failed.";
+          return;
+        }
 
         const result = await res.json();
 
-        if (result.success && result.role === "faculty") {
-          window.location.href = "faculty_dashboard.html";
-        } else if (result.success && result.role === "student") {
-          window.location.href = "scan_qr.html";
+        if (result.success) {
+          // Redirect based on role
+          window.location.href = result.role === "faculty" ? "faculty_dashboard.html" : "scan_qr.html";
         } else {
           message.textContent = "Invalid credentials or user not found.";
         }
       } catch (err) {
         console.error("Login error:", err);
-        message.textContent = "Server error. Try again later.";
+        message.textContent = "Server error. Please try again later.";
       }
     });
   </script>
 </body>
 </html>
+
 
 
 
